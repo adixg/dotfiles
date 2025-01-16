@@ -40,6 +40,21 @@
 		"tray"
 	],
 
+  "hyprland/workspaces": {
+        "format": "{icon}",
+        "on-click": "hyprctl dispatch workspace {id}",
+        "format-icons": {
+            "1": "",   
+            "2": "󰈹",
+            "3": "",
+            "4": "", 
+            "8": "",
+            "9": "󰍹",
+           "urgent": "" // Icon for urgent windows
+//            "default": ""  // Default fallback icon
+        }
+    },
+
 	"custom/left-arrow-dark": {
 		"format": "",
 		"tooltip": false
@@ -67,7 +82,7 @@
 		"tooltip": false
 	},
 	"clock#2": {
-		"format": "{:%H:%M}",
+    "format": "{:%H:%M}",
 		"tooltip": false
 	},
 	"clock#3": {
