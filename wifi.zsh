@@ -45,7 +45,8 @@ echo "Checking for VIT WiFi..."
 ## SSID=$(nmcli | grep -iE 'VIT[2.4 5][G]$')
 ## SSID=$(nmcli | grep -iE 'VIT(2.4|5)(G|)$')
 
-SSID=$(iw dev $device link | grep -iE 'VIT(2.4|5)(G|)$')
+#SSID=$(iw dev $device link | grep -iE 'L-(VIT|ANX)')
+SSID=$(iw dev $device link 'L-ANX-VIT')
 echo $SSID
 
 if [[ $SSID ]]
@@ -53,20 +54,20 @@ then
   login_request $ID $PASS
 
 else
-	echo "VIT Network not found, changing connection... "
+	echo "L-VIT or L-ANX Network not found, changing connection... "
 
-	echo "Trying to login to VIT 2.4G WiFi"
+	echo "Trying to login to L-VIT WiFi"
 
-	Y=$(nmcli device wifi connect "VIT2.4G")
+	Y=$(nmcli device wifi connect "L-VIT")
 
 	if [[ "$Y" =~ 'successfully' ]]
 	then
 	  login_request $ID $PASS
-	
-	else
-		echo "Failed to connect to VIT 2.4G WiFi, trying 5G"
 
-		Y=$(nmcli device wifi connect "VIT5G")
+	else
+		echo "Failed to connect to L-VIT WiFi, trying L-ANX-VIT"
+
+		Y=$(nmcli device wifi connect "L-ANX-VIT")
 
 	  if [[ "$Y" =~ "successfully" ]]
 	  then
