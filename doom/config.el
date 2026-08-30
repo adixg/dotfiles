@@ -58,6 +58,11 @@
          (file+headline "~/org/todo.org" "Tasks")
          "* TODO %?\n  %U\n  %a")))
 
+(setq org-startup-with-inline-images t)
+
+(custom-set-faces
+ '(org-table ((t (:foreground "#ffcc66" :weight bold :height 1.1)))))
+
 (setq projectile-project-search-path'("~/codes"))
 
 ;; Whenever you reconfigure a package, make sure to wrap your config in an

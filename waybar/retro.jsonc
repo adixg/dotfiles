@@ -1,0 +1,124 @@
+{
+    //"output": ["eDP-1"],
+    "output": ["HDMI-A-1", "eDP-1"],
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+
+    "modules-center": [
+        "clock"
+    ],
+
+    "modules-right": [
+        "cpu",
+        "memory",
+        "network",
+        "pulseaudio",
+        "battery"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{name}"
+    },
+
+    "clock": {
+        "format": "{:%H:%M:%S}",
+        "tooltip-format": "{:%Y-%m-%d}"
+    },
+
+    "cpu": {
+        "format": "CPU {usage}%"
+    },
+
+    "memory": {
+        "format": "MEM {percentage}%"
+    },
+
+    "network": {
+        "format-wifi": "NET {signalStrength}%",
+        "format-ethernet": "NET LAN",
+        "format-disconnected": "NET --"
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL MUTE",
+        "format-bluetooth": "VOL {volume}%",
+        "format-bluetooth-muted": "VOL MUTE",
+        "scroll-step": 5,
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    },
+
+    "battery": {
+        "format": "BAT {capacity}%",
+        "format-charging": "BAT +{capacity}%",
+        "format-plugged": "BAT AC",
+        "format-full": "BAT 100%",
+        "interval": 10
+    }
+}{
+    "output": "HDMI-A-1",
+    "layer": "top",
+    "position": "top",
+    "height": 26,
+
+    "modules-left": [
+        "hyprland/workspaces"
+    ],
+
+    "modules-center": [
+        "clock"
+    ],
+
+    "modules-right": [
+        "cpu",
+        "memory",
+        "network",
+        "pulseaudio",
+        "battery"
+    ],
+
+    "hyprland/workspaces": {
+        "format": "{name}"
+    },
+
+    "clock": {
+        "format": "{:%H:%M:%S}",
+        "tooltip-format": "{:%Y-%m-%d}"
+    },
+
+    "cpu": {
+        "format": "CPU {usage}%"
+    },
+
+    "memory": {
+        "format": "MEM {percentage}%"
+    },
+
+    "network": {
+        "format-wifi": "NET {signalStrength}%",
+        "format-ethernet": "NET LAN",
+        "format-disconnected": "NET --"
+    },
+
+    "pulseaudio": {
+        "format": "VOL {volume}%",
+        "format-muted": "VOL MUTE",
+        "format-bluetooth": "VOL {volume}%",
+        "format-bluetooth-muted": "VOL MUTE",
+        "scroll-step": 5,
+        "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
+    },
+
+    "battery": {
+        "format": "BAT {capacity}%",
+        "format-charging": "BAT +{capacity}%",
+        "format-plugged": "BAT AC",
+        "format-full": "BAT 100%",
+        "interval": 10
+    }
+}

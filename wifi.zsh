@@ -91,4 +91,4 @@ fi
 ## fi
 
 echo "WiFi Script Complete. Starting Ping test."
-ping -c 5 1.1.1.1
+ping -c 3 1.1.1.1

@@ -13,3 +13,5 @@ settings:
       w: session-save
       wq: quit --save
       wqa: quit --save
+  content.javascript.clipboard:
+    https://chatgpt.com: access-paste

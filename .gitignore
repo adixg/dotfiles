@@ -1,0 +1,11 @@
+# Runtime state / caches — never commit
+spotify/
+spotify-tui/.spotify_token_cache.json
+spotify-tui/client.yml
+btop/btop.log
+**/__pycache__/
+*.pyc
+
+# Local secrets
+*.secret
+.env

@@ -1,6 +1,14 @@
 -- Migrated from the user's legacy hyprland.conf to Hyprland 0.55+ Lua syntax.
 -- Current config location: ~/.config/hypr/hyprland.lua
 
+hl.config({
+    misc = {
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        force_default_wallpaper = 0,
+        background_color = "#000000",
+    },
+})
 
 hl.device({
     name = "at-translated-set-2-keyboard",
@@ -36,7 +44,7 @@ hl.monitor({
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpaper.service")
-    hl.exec_cmd("LANG=C waybar ")
+    hl.exec_cmd("waybar -c ~/.config/waybar/retro.jsonc -s ~/.config/waybar/retro.css")
 --    hl.exec_cmd("swww-daemon && swww img ~/Downloads/wallpaper.png --transition-type wipe --transition-duration 2")
 --    hl.exec_cmd("dunst")
 
@@ -57,6 +65,10 @@ hl.env("XCURSOR_SIZE", "36")
 hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+
+-- Force QtWebEngine (qutebrowser) to use GBM for hardware-accelerated
+-- rendering on Wayland; avoids the software-fallback / black-screen issues.
+hl.env("QTWEBENGINE_FORCE_USE_GBM", "1")
 
 ----------------
 ---- INPUT -----
@@ -123,6 +135,17 @@ hl.animation({ leaf = "borderangle", enabled = true, speed = 8,  bezier = "defau
 hl.animation({ leaf = "fade",        enabled = true, speed = 7,  bezier = "default" })
 hl.animation({ leaf = "workspaces",  enabled = true, speed = 6,  bezier = "default" })
 
+--------------------
+---- WINDOW RULES --
+--------------------
+
+-- Make qutebrowser slightly transparent (active and inactive opacity).
+-- qutebrowser's real window class is "org.qutebrowser.qutebrowser".
+hl.window_rule({
+    match   = { class = "org.qutebrowser.qutebrowser" },
+    opacity = "0.92 0.92",
+})
+
 ----------------
 ---- GESTURE ----
 ----------------
@@ -177,6 +200,12 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 -- Launchers / lock / logout
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi --show drun"))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wofi --show drun --conf ~/github/wofi/config/config --style ~/github/wofi/src/macchiato/style.css"))
+
+hl.bind(
+    "SUPER + I",
+    hl.dsp.exec_cmd("/home/aditya/.config/hypr/scripts/next-wallpaper.sh"),
+    { description = "Next wallpaper" }
+)
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("wlogout"))
 

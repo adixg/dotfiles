@@ -46,8 +46,8 @@
         "format-icons": {
             "1": "",   
             "2": "󰈹",
-            "3": "",
-            "4": "", 
+            //"3": "",
+            "3": "", 
             "8": "",
             "9": "󰍹",
            "urgent": "" // Icon for urgent windows
@@ -121,6 +121,7 @@
 			"critical": 15
 		},
 		"format": "{icon} {capacity}%",
+    "format-charging": " {icon} {capacity}%",
 		"format-icons": [
 			"",
 			"",

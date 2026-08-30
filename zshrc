@@ -111,7 +111,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias vi='nvim'
-alias weather='curl -s wttr.in/Vellore | head -n 38 '
+alias weather='curl -s wttr.in | head -n 38 '
 alias h='history | grep '
 alias sound='function _sound() { pactl set-sink-volume @DEFAULT_SINK@ "$1%"; }; _sound'
 alias brightness='function _brightness() { brightnessctl set "$1%"; }; _brightness'
@@ -131,6 +131,13 @@ alias z='zathura'
 alias tails='sudo systemctl start tailscaled && sudo tailscale up && sudo systemctl start sshd'
 alias windows='sudo mount -t ntfs-3g /dev/nvme0n1p3 /mnt/windows'
 alias stopwindows='sudo umount /mnt/windows'
+alias wifi='zsh ~/wifi.zsh'
+alias push='zsh ~/github/fakegitpushes/script.zsh'
+alias iit='sshpass -p "$IIT_SSH_PASS" ssh aditya-mainak@10.5.30.155'
+alias iitjump='sshpass -p "$IITJUMP_SSH_PASS" ssh mainak@cnerg.iitkgp.ac.in -p 8201'
+alias jnssh='ssh -N -L 8888:localhost:8888 -p 8201 aditya-mainak@10.5.30.155'
+alias gitpat='cat ~/notes.txt | head -n 1'
+alias ubuntu='ssh aditya@100.125.129.5'
 
 cd() { builtin cd "$@" && ls; }
 mkdir() { command mkdir "$@" && cd "$@"; }
@@ -156,3 +163,13 @@ export SPARK_HOME=/opt/spark
 export PATH=$SPARK_HOME/bin:$PATH
 export PYSPARK_DRIVER_PYTHON=jupyter
 export PYSPARK_DRIVER_PYTHON_OPTS='notebook'
+export Torch_DIR=~/libtorch/share/cmake/Torch
+
+
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+autoload -Uz compinit
+zstyle ':completion:*' menu select
+fpath+=~/.zfunc
+export PATH="$HOME/.local/bin:$PATH"

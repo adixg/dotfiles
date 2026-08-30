@@ -7,3 +7,6 @@ config.load_autoconfig()
 # valid options are 'mocha', 'macchiato', 'frappe', and 'latte'
 # last argument (optional, default is False): enable the plain look for the menu rows
 catppuccin.setup(c, 'macchiato', True)
+
+# Automatically save the session when qutebrowser is closed, and restore it on start.
+c.auto_save.session = True
