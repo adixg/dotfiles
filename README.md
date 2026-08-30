@@ -2,7 +2,9 @@
 
 My personal Linux setup — configuration for the programs I use day to day.
 
-![Screenshot of the desktop](assets/screenshot.jpg)
+![System monitors: conky clock, btop, gping and cava](assets/example2.jpeg)
+
+![Music: spotify-player with a cava visualiser](assets/example1.jpeg)
 
 ## Overview
 
@@ -17,7 +19,7 @@ My personal Linux setup — configuration for the programs I use day to day.
 | Editors | Neovim (`nvim/`), Doom Emacs (`doom/`) |
 | Browser | qutebrowser (`qutebrowser/`) |
 | Chat | WeeChat (`weechat/`) |
-| Music | spotifyd + spotify-player / spotify-tui (`spotify*/`) |
+| Music | spotifyd (`spotifyd/`) + spotify-player / spotify-tui (`spotify-tui/`) |
 | Monitors | btop (`btop/`), htop (`htop/`), conky (`conky/`), cava (`cava/`) |
 | Docs | zathura (`zathura/`) |
 | Misc | lazygit (`lazygit/`), `wifi.zsh` helper |
