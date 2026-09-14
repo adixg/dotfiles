@@ -6,18 +6,18 @@
 # the wrong one.
 #
 # Layout:   btop across the top
-#           gping bottom-left, cmatrix bottom-right
+#           gping bottom-left, asciiquarium bottom-right
 #
 # Swap the bottom-right pane by changing FILLER below. Anything that redraws
-# to fit its pane works: cmatrix, cava, asciiquarium (wants ~80 cols),
-# "vnstat -l", "journalctl -f", "watch -n5 sensors".
+# to fit its pane works: asciiquarium, cmatrix, cava, "vnstat -l",
+# "journalctl -f", "watch -n5 sensors".
 #
 # Detach with prefix-d; the session keeps running with no display attached,
 # so it survives logout and can be re-attached over Tailscale.
 
 SESSION=wall
 PING_TARGET=${PING_TARGET:-1.1.1.1}
-FILLER=${FILLER:-cmatrix -ba -u 6}
+FILLER=${FILLER:-asciiquarium}
 
 if ! tmux has-session -t "$SESSION" 2>/dev/null; then
     tmux new-session  -d -s "$SESSION" -n dash btop
