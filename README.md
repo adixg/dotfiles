@@ -19,7 +19,7 @@ My personal Linux setup — configuration for the programs I use day to day.
 | Editors | Neovim (`nvim/`), Doom Emacs (`doom/`) |
 | Browser | qutebrowser (`qutebrowser/`) |
 | Chat | WeeChat (`weechat/`) |
-| Music | spotifyd (`spotifyd/`) + spotify-player / spotify-tui (`spotify-tui/`) |
+| Music | spotifyd (`spotifyd/`) + spotify-player (`spotify-player/`) |
 | Monitors | btop (`btop/`), htop (`htop/`), conky (`conky/`), cava (`cava/`) |
 | Docs | zathura (`zathura/`) |
 | Misc | lazygit (`lazygit/`), `wifi.zsh` helper |
