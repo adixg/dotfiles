@@ -76,35 +76,33 @@ lists this Arch install, Windows, and the old Arch on `sda4`.
 
 These apply to normal daily use, not to server duty.
 
-### Remote access — not working yet
-`sshd` is installed but `disabled`/`inactive`, and Tailscale SSH has not been
-enabled, so **there is currently no way to log into this machine remotely**.
-Tailscale itself is up, so this is the only missing piece.
-- [ ] Either `sudo tailscale up --ssh` (preferred — no open port, no keys, ACL
-      governed) or `sudo systemctl enable --now sshd` plus the hardening in
-      item 4 of the deferred plan.
+### Remote access — done
+- [x] Tailscale SSH enabled (`tailscale up --ssh`). `sshd` stays `disabled`/
+      `inactive` on purpose — no open port, no keys to manage, access is
+      governed by tailnet ACLs instead.
+- [x] MagicDNS confirmed working tailnet-wide (`arch-ssd.tail38f762.ts.net`),
+      so `ssh aditya@arch-ssd` works as-is from any device on the tailnet —
+      no local alias needed anywhere.
 
-### SSD housekeeping
-- [ ] Enable TRIM: `sudo systemctl enable --now fstrim.timer` (currently
-      disabled; the HDD never needed it, the SSD does).
+### SSD housekeeping — mostly done
+- [x] TRIM enabled (`fstrim.timer`).
 - [ ] Consider `noatime` for `/` in `fstab` (currently `relatime`, which is
       already fine — this is a marginal gain).
 
 ### Backups
 Still nothing. `sda4` and `sda2` are large and idle and make a reasonable local
-target, but a local-only backup on the same machine is not a backup.
+target, but a local-only backup on the same machine is not a backup. **This is
+the single biggest gap left on this install.**
 - [ ] Set up `restic` or `borg`, then **test a restore**.
 
-### Git / SSH credentials
+### Git / SSH credentials — done
 - [x] Dotfiles `origin` is on HTTPS with a PAT cached via
       `credential.helper store`, so pushes work. No SSH key exists
       (`~/.ssh` is absent); generate one if key-based auth is ever wanted.
-- [ ] `sshpass` is still not installed, so the `iit` and `iitjump` aliases
-      cannot work. They also need `IIT_SSH_PASS` / `IITJUMP_SSH_PASS`
-      exported.
-- [ ] The `ubuntu` alias points at `100.125.129.5` ("media"), a tailnet node
-      that has been offline for over a year. Either revive it or drop the
-      alias.
+- [x] `iit`/`iitjump` aliases removed from `zshrc` — no longer needed, so
+      `sshpass` is not required either.
+- [x] Dead `ubuntu` alias (pointed at `100.125.129.5`, offline 400+ days)
+      removed from `zshrc`.
 
 ### Old install cleanup (not urgent)
 - [ ] `sda4` is being kept as a fallback. Once confident in this install,

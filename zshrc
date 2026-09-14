@@ -133,11 +133,8 @@ alias windows='sudo mount -t ntfs-3g /dev/nvme0n1p3 /mnt/windows'
 alias stopwindows='sudo umount /mnt/windows'
 alias wifi='zsh ~/wifi.zsh'
 alias push='zsh ~/github/fakegitpushes/script.zsh'
-alias iit='sshpass -p "$IIT_SSH_PASS" ssh aditya-mainak@10.5.30.155'
-alias iitjump='sshpass -p "$IITJUMP_SSH_PASS" ssh mainak@cnerg.iitkgp.ac.in -p 8201'
 alias jnssh='ssh -N -L 8888:localhost:8888 -p 8201 aditya-mainak@10.5.30.155'
 alias gitpat='cat ~/notes.txt | head -n 1'
-alias ubuntu='ssh aditya@100.125.129.5'
 
 cd() { builtin cd "$@" && ls; }
 mkdir() { command mkdir "$@" && cd "$@"; }
