@@ -1,23 +1,133 @@
-# Home Server TODO
+# Arch on the SSD — primary install
 
-Laptop (Lenovo IdeaPad Gaming 3 15IMH05, i5-10300H, 8 GB RAM) running Arch, lid
-closed / external screen, used as an always-on home server.
+Lenovo IdeaPad Gaming 3 15IMH05 (i5-10300H, 8 GB RAM, GTX 1650 Mobile).
 
-Assessment done 2026-09-03. Verdict: **safe to run 24/7 once the "Must" items
-below are done.** Nothing is currently failing; the fixes are about battery
-safety, staying reachable, and not wearing out the disk faster than necessary.
+This is the **second** Arch install on this laptop, living on the NVMe SSD
+(`nvme0n1p5`, labelled `Arch`). It is now the one in daily use. The original
+Arch install on the HDD (`sda4`) is still intact and still bootable from the
+GRUB menu, but it is no longer the system being maintained.
 
-Status snapshot at assessment time:
-- HDD (`/dev/sda`, WD10SPZX, holds `/`): SMART PASSED, 0 reallocated / 0 pending
-  sectors, 0 CRC errors, 7985 power-on hours. Only issue: `Load_Cycle_Count`
-  294828 and climbing fast (~37/hr) due to aggressive head parking.
-- NVMe (`/dev/nvme0`, SK Hynix, Windows/NTFS): SMART PASSED, 8% wear, 0 errors.
-  Healthy. **129 unsafe shutdowns** recorded here.
-- Battery (L19D3PF4): 1435 cycles, ~82% of design capacity, held at partial
-  charge by TLP.
-- No firewall, SSH allows passwords, on WiFi not Ethernet, no backups, no UPS.
+The home-server plan that this file originally documented is **deferred** — see
+[Home server plan (deferred)](#home-server-plan-deferred) at the bottom. Nothing
+there is being acted on right now, but it is kept because the hardware and most
+of the reasoning still apply if this box ever does become an always-on server.
 
 ---
+
+## Current layout
+
+| Device | Contents |
+| --- | --- |
+| `nvme0n1p1` | EFI system partition (`SYSTEM_DRV`), mounted at `/efi` |
+| `nvme0n1p2` | Microsoft reserved (MSR) |
+| `nvme0n1p3` | Windows (`Windows-SSD`) |
+| `nvme0n1p4` | Windows Recovery (WinRE) |
+| `nvme0n1p5` | **Arch — current root**, ext4, ~157 G |
+| `sda1` | Microsoft reserved, leftover |
+| `sda2` | NTFS `Data` |
+| `sda3` | swap (not currently used by this install) |
+| `sda4` | **Old Arch install**, ext4, intact and bootable |
+
+Boot: UEFI, Secure Boot off, GRUB installed to `/efi/EFI/GRUB` with its config
+at `/boot/grub/grub.cfg`. Firmware boot order puts GRUB first; the GRUB menu
+lists this Arch install, Windows, and the old Arch on `sda4`.
+
+## Done on this install
+
+- Root migrated to the NVMe (this was item 11 of the old plan).
+- GRUB reinstalled properly from this system: `grub` + `os-prober` are real
+  pacman packages now, `/efi` is mounted via `fstab`, `GRUB_DISABLE_OS_PROBER=false`
+  is set, and the stale 2024 `grub.cfg` that lived on the ESP has been removed.
+- `fuse3` installed — without it `grub-mount` cannot run, and `os-prober`
+  silently fails to detect *any* unmounted partition (this is what hid the old
+  Arch install from the boot menu).
+- Dead `ubuntu` UEFI boot entry removed.
+- NVIDIA GTX 1650 switched from `nouveau` to the proprietary driver. Under
+  `nouveau`, EGL failed to initialise on that GPU and the HDMI output — which is
+  wired to the dGPU — displayed nothing at all.
+- `intel-ucode` installed (was item 10).
+- `smartmontools`, `nvme-cli`, `tailscale`, `openssh` installed.
+
+## Outstanding on this install
+
+These apply to normal daily use, not to server duty.
+
+### Swap
+There is no swap at all — `fstab` has only `/` and `/efi`, and `sda3` is not
+referenced. On 8 GB RAM that is worth fixing. Prefer `zram` over a swap
+partition on the SSD:
+- [ ] `sudo pacman -S zram-generator`
+- [ ] `/etc/systemd/zram-generator.conf` with `[zram0]` / `zram-size = ram / 2`
+- [ ] `sudo systemctl daemon-reload && sudo systemctl start systemd-zram-setup@zram0`
+
+### SSD housekeeping
+- [ ] Enable TRIM: `sudo systemctl enable --now fstrim.timer` (currently
+      disabled; the HDD never needed it, the SSD does).
+- [ ] Consider `noatime` for `/` in `fstab` (currently `relatime`, which is
+      already fine — this is a marginal gain).
+
+### Backups
+Still nothing. `sda4` and `sda2` are large and idle and make a reasonable local
+target, but a local-only backup on the same machine is not a backup.
+- [ ] Set up `restic` or `borg`, then **test a restore**.
+
+### Git / SSH credentials
+- [ ] The `origin` remote for the dotfiles repo is set to SSH but there is no
+      key yet (`~/.ssh` does not exist). Either generate one and add it to
+      GitHub, or set the remote back to HTTPS. `credential.helper store` is
+      already configured but no credential file has been written.
+- [ ] The `iit`, `iitjump`, `jnssh` and `ubuntu` aliases in `zshrc` need
+      `IIT_SSH_PASS` / `IITJUMP_SSH_PASS` exported, and `sshpass` installed.
+
+### Old install cleanup (not urgent)
+- [ ] `sda4` is being kept as a fallback. Once confident in this install,
+      decide whether to repurpose it (the old plan wanted `anaconda3` and
+      `anime` bind-mounted from it — that was never set up, so nothing on this
+      install depends on it today).
+
+## Health check
+
+```
+sudo smartctl -H -A /dev/nvme0             # Percentage Used / Available Spare / Unsafe Shutdowns
+sudo smartctl -H -A -f brief /dev/sda      # Reallocated / Pending / Load_Cycle_Count
+sensors                                    # temperatures
+systemctl --failed                         # anything broken
+journalctl -p 3 -b                         # errors since boot
+ss -tulpn                                  # what's listening
+```
+
+SSD lifespan note: what wears an SSD is bytes written, not hours powered on, so
+uptime costs it very little. At the last reading the NVMe was at 8 % wear with
+0 errors. The real hazard is **sudden power loss** — the same drive had recorded
+129 unsafe shutdowns — which can take an SSD out all at once rather than
+gradually.
+
+---
+
+# Home server plan (deferred)
+
+Everything below was written for using this laptop as an always-on home server
+(lid closed, external screen). **It is not being done right now.** Kept for
+reference in case that changes.
+
+Assessment was done **2026-09-03, before the SSD migration**, so where it talks
+about `/` living on the HDD, or about Tailscale already running, that describes
+the old `sda4` install. The hardware facts and the reasoning still hold.
+
+Verdict at the time: safe to run 24/7 once the "Must" items were done. Nothing
+was failing; the fixes were about battery safety, staying reachable, and not
+wearing out the disk faster than necessary.
+
+Status snapshot at assessment time:
+- HDD (`/dev/sda`, WD10SPZX, held `/` then): SMART PASSED, 0 reallocated / 0
+  pending sectors, 0 CRC errors, 7985 power-on hours. Only issue:
+  `Load_Cycle_Count` 294828 and climbing fast (~37/hr) due to aggressive head
+  parking.
+- NVMe (`/dev/nvme0`, SK Hynix, Windows/NTFS then): SMART PASSED, 8% wear, 0
+  errors. Healthy. **129 unsafe shutdowns** recorded here.
+- Battery (L19D3PF4): 1435 cycles, ~82% of design capacity, held at partial
+  charge by TLP. (TLP is *not* installed on the current SSD install.)
+- No firewall, SSH allows passwords, on WiFi not Ethernet, no backups, no UPS.
 
 ## Must do before leaving it on 24/7
 
@@ -55,13 +165,14 @@ START_CHARGE_THRESH_BAT0=55
 ```
 then `sudo systemctl restart tlp`. Verify with `sudo tlp-stat -b`. Still
 eyeball it for swelling every few months.
-(Current thresholds read START=80 / STOP=1, which looks misconfigured — fix
-regardless of which path you choose.)
+(Thresholds read START=80 / STOP=1 at assessment time, which looked
+misconfigured — fix regardless of which path you choose.)
 
 ### 2. Add a UPS
 - [ ] Buy a small UPS (~600 VA, ~$60-80). **129 unsafe shutdowns** on the NVMe
-      means this box loses power / hard-locks regularly; the HDD has survived so
-      far on luck. Mandatory if the battery comes out.
+      means this box loses power / hard-locks regularly. Now that the OS lives
+      on that NVMe, this matters more than it did. Mandatory if the battery
+      comes out.
 - [ ] Configure `nut` for automatic clean shutdown on battery.
 
 ### 3. Stop lid-close from suspending the server
@@ -77,7 +188,7 @@ HandleLidSwitchDocked=ignore
 - [ ] `sudo systemctl restart systemd-logind`
 
 ### 4. Lock down SSH
-Currently: `PasswordAuthentication yes`, listening on `0.0.0.0:22`, no
+At assessment: `PasswordAuthentication yes`, listening on `0.0.0.0:22`, no
 brute-force protection.
 - [ ] Put keys in `~/.ssh/authorized_keys`, confirm key login works.
 - [ ] In `/etc/ssh/sshd_config.d/10-hardening.conf`:
@@ -89,15 +200,16 @@ PermitRootLogin prohibit-password
 - [ ] `sudo systemctl restart sshd`
 - [ ] Install `sshguard` or `fail2ban` and enable it.
 - [ ] Preferred: restrict port 22 to the Tailscale interface + LAN subnet only
-      (firewall rule, or `ListenAddress` lines). Tailscale is already running —
-      use it as the remote path, don't port-forward 22 on the router.
-
----
+      (firewall rule, or `ListenAddress` lines) — use Tailscale as the remote
+      path, don't port-forward 22 on the router. Tailscale SSH avoids running
+      `sshd` for inbound entirely.
 
 ## Should do
 
 ### 5. Fix HDD head-parking (load cycle count)
-`Load_Cycle_Count` is at ~49% of the ~600k rating after only 8000 hours.
+Only relevant if the HDD stays in active use; it is not mounted by the current
+install. `Load_Cycle_Count` was at ~49% of the ~600k rating after only 8000
+hours.
 - [ ] Add to `/etc/tlp.conf` (TLP will override manual `hdparm` otherwise):
 ```
 DISK_APM_LEVEL_ON_AC="254 254"
@@ -111,13 +223,11 @@ DISK_IDLE_SECS_ON_AC=0
       `sudo idle3ctl -d /dev/sda`, then fully power-cycle the machine.
 
 ### 6. Backups
-No cron jobs, no timers, no backup tooling. If `/dev/sda` dies, everything is
-gone.
+(Also listed above as outstanding for daily use — it matters either way.)
 - [ ] Set up `restic` or `borg`, weekly, to an external disk and/or a remote.
 - [ ] Test a restore.
 
 ### 7. smartd self-tests + alerting
-`smartd` is enabled but only watches attributes.
 - [ ] In `/etc/smartd.conf`, replace the `DEVICESCAN` line with:
 ```
 /dev/sda    -a -o on -S on -s (S/../.././02|L/../../6/03) -W 4,45,55 -m root -M exec /usr/share/smartmontools/smartd_warning.sh
@@ -142,110 +252,34 @@ installed).
 Currently on WiFi (`wlp0s20f3`); iwlwifi logged association hiccups. Use a cable
 for a server — WiFi drops cause intermittent unreachability.
 
-### 10. intel-ucode
-Not installed — CPU shows "Old microcode" / "Vulnerable: No microcode" for
-several items. Bootloader is GRUB; `mkinitcpio` HOOKS already has the
-`microcode` hook, so no manual bootloader edits needed.
-- [ ] `sudo pacman -S intel-ucode`
-- [ ] `sudo mkinitcpio -P`
-- [ ] `sudo grub-mkconfig -o /boot/grub/grub.cfg`
-- [ ] Reboot, verify: `journalctl -k -b | grep -i microcode` → "microcode
-      updated early to revision 0x...".
-
----
+### 10. intel-ucode — done
+Installed on the current SSD install.
 
 ## Nice to have
 
-### 11. Move root onto the NVMe (promoted from "nice to have" — plan finalized)
-The SSD is healthy (8% wear) and would be far better for 24/7 than a 5400rpm
-laptop HDD, which is also the drive with the climbing `Load_Cycle_Count`. The
-HDD's `Load_Cycle_Count` fix (item 5) still matters regardless of this move,
-since the HDD isn't going away — it becomes the cold-storage disk (see below).
-
-**Current numbers** (checked 2026-09-11):
-- Root (`sda4`, ext4) uses 149G of 232G.
-- `/home/aditya` is 94G of that. Breakdown: `anaconda3` 44G, `.cache` 14G,
-  `anime` 14G, `.ollama` 6.2G, everything else (`~/.config`, `~/.rustup`,
-  `~/github`, `~/codes`, `~/Downloads`, browser profiles, `~/uni_memories`,
-  etc.) ~22G combined.
-- `/var/cache/pacman/pkg` is 12G — prunable.
-- Non-home system footprint (`/etc`, `/var` minus pacman cache, etc.) ≈ 43G.
-- Decision made: `anaconda3` and `anime` are cold/unused on this server — they
-  stay behind on the HDD rather than moving to the SSD. `.ollama` is treated as
-  hot (kept on SSD) since model-load speed benefits from NVMe — flag if that's
-  wrong and it should move to cold storage instead.
-- **New NVMe root only needs to hold**: ~43G system + ~22G home (misc) +
-  `.ollama` 6.2G ≈ **~72G**, so size the new partition generously at
-  **100-120G** for headroom (Docker images, package growth, logs).
-
-**Key design decision: hot/cold split, not a full copy.**
-`anaconda3` and `anime` (58G) get *left in place* on the old `sda4` — no need
-to re-copy them anywhere. After migration, `sda4` stops being root and becomes
-a plain data volume; those two folders are bind-mounted back into
-`/home/aditya` on the new system so every path stays identical (nothing that
-references `~/anaconda3` or `~/anime` needs to change).
-
-**Steps:**
-1. **Windows**: Settings → Power → disable Fast Startup. Fully shut down (not
-   sleep/hibernate — a hibernated NTFS volume can make Linux tools refuse to
-   touch it). Boot into Windows, Disk Management → shrink `C:` (`nvme0n1p3`)
-   by ~110-130G.
-2. **Backup irreplaceable data** to an external drive before any partitioning
-   — SSH keys, `~/github`, `~/codes`, `~/uni_memories`, `~/org`, anything not
-   already in a git remote. (This doubles as finally doing item 6.)
-3. Boot a live/rescue environment, create a new ext4 partition in the freed
-   NVMe space (e.g. `nvme0n1p5`).
-4. `rsync -aHAXS` from `sda4` (mounted, not live-booted-from) to the new
-   partition, **excluding**:
-   `/proc /sys /dev /run /tmp /mnt /media /lost+found`,
-   `home/aditya/.cache`, `home/aditya/anaconda3`, `home/aditya/anime`,
-   and prune `/var/cache/pacman/pkg` first (`paccache -rk1`) or exclude it too.
-5. Chroot into the new root:
-   - Update `/etc/fstab`: new root UUID; keep swap on `sda3` as-is; add an
-     entry mounting the old `sda4` (now a data volume) at e.g. `/mnt/hdd`;
-     add bind mounts —
-     `/mnt/hdd/home/aditya/anaconda3 -> /home/aditya/anaconda3` and
-     `/mnt/hdd/home/aditya/anime -> /home/aditya/anime` (create the empty
-     mountpoint dirs first).
-   - `mkinitcpio -P` to rebuild the initramfs with the new root UUID baked in.
-   - `grub-mkconfig -o /boot/grub/grub.cfg` to regenerate the config.
-   - `grub-install` (re-run, targeting the ESP — currently unmounted anywhere,
-     likely `nvme0n1p1` shared with Windows) — needed because GRUB's core
-     image embeds where to find `/boot/grub` at install time, and that
-     pointer needs to move with root. Confirm the exact ESP/target before
-     running this.
-6. Boot from the new root, verify the bind-mounted folders show up correctly
-   and everything works.
-7. **Don't touch `sda4` immediately** — keep it bootable as a fallback for a
-   few days. Once confident, repurpose the rest of it as: home for the
-   `anaconda3`/`anime` bind mounts, plus a good target for the restic/borg
-   backup repo from item 6.
-8. On the new NVMe-backed root, add `noatime` (or `relatime`) and enable
-   `fstrim.timer` — the HDD never needed TRIM, the SSD does.
+### 11. Move root onto the NVMe — done
+Completed. Root now lives on `nvme0n1p5`. Note the hot/cold split described in
+the original plan was **not** carried out: `anaconda3` and `anime` were left on
+`sda4`, but no bind mounts were configured, so the current install simply does
+not reference them.
 
 ### 12. ProtonVPN daemon
-`proton.VPN.service` is enabled but fails to start on every boot. If unused:
+`proton.VPN.service` was enabled but failed to start on every boot on the old
+install. If unused:
 - [ ] `sudo systemctl disable --now proton.VPN.service`
 (A full-tunnel VPN on a server also breaks inbound LAN/Tailscale reachability —
 leave it off unless you have a specific need.)
 
 ### 13. Tailscale hardening
-- [ ] Disable key expiry for this node (so it doesn't drop off the tailnet).
+`tailscale` is installed on the current system but not yet brought up.
+- [ ] `sudo systemctl enable --now tailscaled` then `sudo tailscale up`
+      (`enable`, not just `start`, so it survives reboot).
+- [ ] **Disable key expiry** for this node in the admin console, or an
+      unattended box silently drops off the tailnet after ~6 months and takes
+      your remote access with it.
 - [ ] Tighten ACLs to only what needs to reach it.
-- [ ] Consider Tailscale SSH.
+- [ ] Consider Tailscale SSH (`tailscale up --ssh`).
 
 ---
-
-## Reference: re-run the health check later
-
-```
-sudo smartctl -H -A -f brief /dev/sda      # watch Reallocated / Pending / Load_Cycle_Count
-sudo smartctl -H -A /dev/nvme0             # watch Percentage Used / Available Spare / Unsafe Shutdowns
-sudo tlp-stat -b                           # battery charge thresholds + health
-sensors                                    # temperatures
-systemctl --failed                         # anything broken
-journalctl -p 3 -b                         # errors since boot
-ss -tulpn                                   # what's listening
-```
 
 Idle power draw ≈ 10-20 W ≈ $1-3/month.
