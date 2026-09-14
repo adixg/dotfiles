@@ -1,0 +1,6 @@
+[Unit]
+Description=Reset hyprsunset to normal temperature (morning)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hyprctl hyprsunset identity

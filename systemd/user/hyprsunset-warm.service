@@ -1,0 +1,6 @@
+[Unit]
+Description=Set hyprsunset to warm evening temperature (3000K)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/hyprctl hyprsunset temperature 3000
