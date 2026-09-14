@@ -44,17 +44,18 @@ hl.monitor({
 
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpaper.service")
-    hl.exec_cmd("waybar -c ~/.config/waybar/retro.jsonc -s ~/.config/waybar/retro.css")
+    hl.exec_cmd("hyprsunset")
+    hl.exec_cmd("waybar -c /home/aditya/.config/waybar/retro.jsonc -s /home/aditya/.config/waybar/retro.css")
 --    hl.exec_cmd("swww-daemon && swww img ~/Downloads/wallpaper.png --transition-type wipe --transition-duration 2")
 --    hl.exec_cmd("dunst")
 
     -- Preserve your old silent workspace launches.
     hl.exec_cmd("kitty", { workspace = "1 silent" })
-    hl.exec_cmd("firefox", { workspace = "2 silent" })
+    hl.exec_cmd("kitty", { workspace = "2 silent" })
     hl.exec_cmd("kitty", { workspace = "3 silent" })
     hl.exec_cmd("kitty btop", { workspace = "9 silent" })
 
-    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+    hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE")
 end)
 
 -------------------------------
@@ -69,6 +70,12 @@ hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 -- Force QtWebEngine (qutebrowser) to use GBM for hardware-accelerated
 -- rendering on Wayland; avoids the software-fallback / black-screen issues.
 hl.env("QTWEBENGINE_FORCE_USE_GBM", "1")
+
+-- NVIDIA (GTX 1650, proprietary driver): correct VA-API/GLX/GBM vendor
+-- selection now that both an Intel iGPU and an NVIDIA dGPU are present.
+hl.env("LIBVA_DRIVER_NAME", "nvidia")
+hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+hl.env("GBM_BACKEND", "nvidia-drm")
 
 ----------------
 ---- INPUT -----
