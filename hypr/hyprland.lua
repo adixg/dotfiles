@@ -45,6 +45,7 @@ hl.monitor({
 hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpaper.service")
     hl.exec_cmd("hyprsunset")
+    hl.exec_cmd("hypridle")
     hl.exec_cmd("waybar -c /home/aditya/.config/waybar/retro.jsonc -s /home/aditya/.config/waybar/retro.css")
 --    hl.exec_cmd("swww-daemon && swww img ~/Downloads/wallpaper.png --transition-type wipe --transition-duration 2")
 --    hl.exec_cmd("dunst")
