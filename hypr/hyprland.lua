@@ -161,23 +161,6 @@ hl.window_rule({
     opacity = "0.92 0.92",
 })
 
--- Conky is an X11 desktop widget, so Hyprland tiles it like an application and
--- stretches it to fill the workspace. Float it, strip the decoration, keep it
--- unfocusable, and pin it to the top right of eDP-1 (which starts at x=1280).
-hl.window_rule({
-    name  = "conky-widget",
-    match = { class = "^Conky$" },
-
-    float       = true,
-    pin         = true,
-    no_focus    = true,
-    no_anim     = true,
-    border_size = 0,
-    rounding    = 0,
-    monitor     = "eDP-1",
-    move        = "100%-300 70",
-})
-
 ----------------
 ---- GESTURE ----
 ----------------
