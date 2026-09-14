@@ -35,6 +35,9 @@ hl.monitor({
     scale = 1,
 })
 
+-- Keep the clock workspace on the laptop panel.
+hl.workspace_rule({ workspace = "8", monitor = "eDP-1" })
+
 -- For screensharing, replace the eDP-1 rule above with:
 -- hl.monitor({ output = "eDP-1", mode = "preferred", position = "1920x0", scale = 1, bitdepth = 8 })
 
@@ -55,6 +58,10 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("kitty", { workspace = "2 silent" })
     hl.exec_cmd("kitty", { workspace = "3 silent" })
     hl.exec_cmd("kitty btop", { workspace = "9 silent" })
+
+    -- Big clock on its own workspace, pinned to the laptop panel below.
+    hl.exec_cmd("kitty -o font_size=72 -e tty-clock -c -C 6 -s -b -B",
+                { workspace = "8 silent" })
 
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE")
 end)
@@ -152,6 +159,23 @@ hl.animation({ leaf = "workspaces",  enabled = true, speed = 6,  bezier = "defau
 hl.window_rule({
     match   = { class = "org.qutebrowser.qutebrowser" },
     opacity = "0.92 0.92",
+})
+
+-- Conky is an X11 desktop widget, so Hyprland tiles it like an application and
+-- stretches it to fill the workspace. Float it, strip the decoration, keep it
+-- unfocusable, and pin it to the top right of eDP-1 (which starts at x=1280).
+hl.window_rule({
+    name  = "conky-widget",
+    match = { class = "^Conky$" },
+
+    float       = true,
+    pin         = true,
+    no_focus    = true,
+    no_anim     = true,
+    border_size = 0,
+    rounding    = 0,
+    monitor     = "eDP-1",
+    move        = "100%-300 70",
 })
 
 ----------------
