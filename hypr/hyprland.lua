@@ -46,7 +46,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("systemctl --user start hyprpaper.service")
     hl.exec_cmd("hyprsunset")
     hl.exec_cmd("hypridle")
-    hl.exec_cmd("waybar -c /home/aditya/.config/waybar/retro.jsonc -s /home/aditya/.config/waybar/retro.css")
+    hl.exec_cmd("waybar -c ~/.config/waybar/retro.jsonc -s ~/.config/waybar/retro.css")
 --    hl.exec_cmd("swww-daemon && swww img ~/Downloads/wallpaper.png --transition-type wipe --transition-duration 2")
 --    hl.exec_cmd("dunst")
 
@@ -207,9 +207,8 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 
 -- Launchers / lock / logout
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi --show drun"))
--- Alternate launcher theme. Absolute paths: exec_cmd does not run through a
--- shell, so ~ is not expanded.
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wofi --show drun --conf /home/aditya/.config/wofi/config --style /home/aditya/.config/wofi/style/style-dark.css"))
+-- Alternate launcher theme.
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wofi --show drun --conf ~/.config/wofi/config --style ~/.config/wofi/style/style-dark.css"))
 
 hl.bind(
     "SUPER + I",
