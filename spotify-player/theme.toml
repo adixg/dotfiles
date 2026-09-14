@@ -1,0 +1,34 @@
+# Catppuccin Macchiato, ported from the old spotify-tui config.yaml.
+# Several values match the canonical Catppuccin Macchiato palette hex-for-hex
+# with the old file's RGB comments (border/inactive, table_header/header,
+# current_playing/playbar_progress_text, playback_artists/playbar_text,
+# block_title/active), confirming this is a faithful port rather than a
+# reinterpretation.
+
+[[themes]]
+name = "catppuccin_macchiato"
+
+[themes.component_style]
+block_title                    = { fg = "#c6a0f6", modifiers = ["Bold"] }   # Mauve
+border                         = { fg = "#6e738d" }                        # Overlay0
+selection                      = { fg = "#b7bdf8", modifiers = ["Reversed", "Bold"] } # Lavender
+current_playing                = { fg = "#a6da95", modifiers = ["Bold"] }   # Green
+page_desc                      = { fg = "#8087a2" }                        # Overlay1
+playlist_desc                  = { fg = "#8087a2" }                        # Overlay1
+table_header                   = { fg = "#b7bdf8", modifiers = ["Bold"] }   # Lavender
+secondary_row                  = { fg = "#494d64" }                        # Surface1
+like                           = { fg = "#ed8796" }                        # Red
+
+playback_status                = { fg = "#c6a0f6", modifiers = ["Bold"] }   # Mauve
+playback_track                 = { fg = "#cad3f5", modifiers = ["Bold"] }   # Text
+playback_artists                = { fg = "#a5adcb" }                       # Subtext0
+playback_album                 = { fg = "#b8c0e0" }                        # Subtext1
+playback_genres                = { fg = "#8087a2" }                        # Overlay1
+playback_metadata              = { fg = "#6e738d" }                        # Overlay0
+playback_progress_bar          = { fg = "#a6da95" }                        # Green
+playback_progress_bar_unfilled = { fg = "#181926" }                        # Crust
+
+lyrics_played                  = { fg = "#6e738d" }                        # Overlay0
+lyrics_playing                 = { fg = "#a6da95", modifiers = ["Bold"] }   # Green
+
+visualization = { low = "#8aadf4", mid = "#c6a0f6", high = "#f5bde6" }     # Blue -> Mauve -> Pink

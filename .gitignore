@@ -1,6 +1,5 @@
 # Runtime state / caches — never commit
 spotify/
-spotify-player/token_cache.json
 btop/btop.log
 **/__pycache__/
 *.pyc
