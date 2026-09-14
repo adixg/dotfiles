@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-WALLDIR="/home/aditya/wallpapers"
+WALLDIR="/home/aditya/dotfiles/wallpapers"
 
 mapfile -d '' wallpapers < <(
     find "$WALLDIR" -maxdepth 1 -type f \
