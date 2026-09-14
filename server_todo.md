@@ -46,19 +46,43 @@ lists this Arch install, Windows, and the old Arch on `sda4`.
   `nouveau`, EGL failed to initialise on that GPU and the HDMI output — which is
   wired to the dGPU — displayed nothing at all.
 - `intel-ucode` installed (was item 10).
-- `smartmontools`, `nvme-cli`, `tailscale`, `openssh` installed.
+- **Audio**: there was no audio stack at all. `pipewire`, `pipewire-pulse`,
+  `pipewire-alsa`, `wireplumber` and `rtkit` installed. Note the sockets only
+  activate at session start, so the first time they need starting by hand.
+  Firefox had also grabbed the ALSA device directly (it launched when no sound
+  server existed and fell back to raw ALSA), which blocked PipeWire from
+  claiming the internal card until Firefox was closed.
+- **Swap**: `zram-generator` configured with `zram-size = ram / 2`, zstd, giving
+  3.8 G of compressed swap at priority 100 — roughly 8-11 G of effective
+  capacity at typical zstd ratios, with zero SSD writes. Paired with
+  `vm.swappiness = 180` and `vm.page-cluster = 0` in
+  `/etc/sysctl.d/99-zram.conf`: high swappiness is correct *because* the swap
+  is in RAM, where swapping costs microseconds of CPU rather than a disk
+  round-trip. If disk swap is ever added, lower swappiness back toward 60.
+  `sda3` (7.7 G swap, from the old install) is deliberately left off — using it
+  would keep the HDD spinning and work against the `Load_Cycle_Count` problem
+  in item 5.
+- Tailscale joined to the tailnet as `arch-ssd` (`100.115.174.125`), with
+  `tailscaled` enabled so it survives reboots.
+- `smartmontools`, `nvme-cli`, `openssh`, `bluez`, `ntfs-3g`, `acpi`, `paru`
+  and the desktop pieces that were missing (`dunst`, `btop`, `grim`, `slurp`,
+  `brightnessctl`, `neovim`, `xdg-desktop-portal-hyprland`, `hyprpolkitagent`,
+  `hypridle`, fonts) installed.
+- Dotfiles now actually in use: `~/.config/{hypr,kitty,waybar,wofi,btop,cava}`
+  and `~/.zshrc` are symlinks into this repo. Several were plain directories or
+  missing entirely, so those configs had never been loading.
 
 ## Outstanding on this install
 
 These apply to normal daily use, not to server duty.
 
-### Swap
-There is no swap at all — `fstab` has only `/` and `/efi`, and `sda3` is not
-referenced. On 8 GB RAM that is worth fixing. Prefer `zram` over a swap
-partition on the SSD:
-- [ ] `sudo pacman -S zram-generator`
-- [ ] `/etc/systemd/zram-generator.conf` with `[zram0]` / `zram-size = ram / 2`
-- [ ] `sudo systemctl daemon-reload && sudo systemctl start systemd-zram-setup@zram0`
+### Remote access — not working yet
+`sshd` is installed but `disabled`/`inactive`, and Tailscale SSH has not been
+enabled, so **there is currently no way to log into this machine remotely**.
+Tailscale itself is up, so this is the only missing piece.
+- [ ] Either `sudo tailscale up --ssh` (preferred — no open port, no keys, ACL
+      governed) or `sudo systemctl enable --now sshd` plus the hardening in
+      item 4 of the deferred plan.
 
 ### SSD housekeeping
 - [ ] Enable TRIM: `sudo systemctl enable --now fstrim.timer` (currently
@@ -72,12 +96,15 @@ target, but a local-only backup on the same machine is not a backup.
 - [ ] Set up `restic` or `borg`, then **test a restore**.
 
 ### Git / SSH credentials
-- [ ] The `origin` remote for the dotfiles repo is set to SSH but there is no
-      key yet (`~/.ssh` does not exist). Either generate one and add it to
-      GitHub, or set the remote back to HTTPS. `credential.helper store` is
-      already configured but no credential file has been written.
-- [ ] The `iit`, `iitjump`, `jnssh` and `ubuntu` aliases in `zshrc` need
-      `IIT_SSH_PASS` / `IITJUMP_SSH_PASS` exported, and `sshpass` installed.
+- [x] Dotfiles `origin` is on HTTPS with a PAT cached via
+      `credential.helper store`, so pushes work. No SSH key exists
+      (`~/.ssh` is absent); generate one if key-based auth is ever wanted.
+- [ ] `sshpass` is still not installed, so the `iit` and `iitjump` aliases
+      cannot work. They also need `IIT_SSH_PASS` / `IITJUMP_SSH_PASS`
+      exported.
+- [ ] The `ubuntu` alias points at `100.125.129.5` ("media"), a tailnet node
+      that has been offline for over a year. Either revive it or drop the
+      alias.
 
 ### Old install cleanup (not urgent)
 - [ ] `sda4` is being kept as a fallback. Once confident in this install,
@@ -96,11 +123,34 @@ journalctl -p 3 -b                         # errors since boot
 ss -tulpn                                  # what's listening
 ```
 
-SSD lifespan note: what wears an SSD is bytes written, not hours powered on, so
-uptime costs it very little. At the last reading the NVMe was at 8 % wear with
-0 errors. The real hazard is **sudden power loss** — the same drive had recorded
-129 unsafe shutdowns — which can take an SSD out all at once rather than
-gradually.
+### NVMe reading, 2026-09-13 (after the migration)
+
+```
+Percentage Used              8%          unchanged since the 2026-09-03 check
+Available Spare              100%        threshold 10% — no reserve consumed
+Media/Data Integrity Errors  0
+Error Log Entries            0
+Data Units Written           35.0 TB
+Power On Hours               3,746
+Power Cycles                 5,321
+Unsafe Shutdowns             129         also unchanged since 2026-09-03
+Temperature                  37 C
+```
+
+What this means: 35 TB written for 8 % consumed implies an effective endurance
+around 435 TB, well above the ~150 TBW typically quoted for this class of
+drive, leaving roughly 400 TB of writes. A light server writing 10-20 GB/day
+would take decades to reach that, so **endurance is not the constraint** and
+running 24/7 costs it almost nothing — what wears an SSD is bytes written, not
+hours powered on.
+
+The real hazard is **sudden power loss**, and 129 unsafe shutdowns is ~2.4 % of
+all power-offs. That matters more now than it did in September: back then this
+drive held only Windows, and it now holds the OS. This is why the UPS (item 2)
+is the one deferred item worth promoting. Reassuringly, none of the damage
+indicators have moved — spare still 100 %, zero media errors — so the 129 are
+history rather than an ongoing pattern. Every shutdown since this install was
+created has been clean.
 
 ---
 
@@ -271,12 +321,12 @@ install. If unused:
 leave it off unless you have a specific need.)
 
 ### 13. Tailscale hardening
-`tailscale` is installed on the current system but not yet brought up.
-- [ ] `sudo systemctl enable --now tailscaled` then `sudo tailscale up`
-      (`enable`, not just `start`, so it survives reboot).
+- [x] `tailscaled` enabled and the node is on the tailnet as `arch-ssd`
+      (`100.115.174.125`).
 - [ ] **Disable key expiry** for this node in the admin console, or an
       unattended box silently drops off the tailnet after ~6 months and takes
-      your remote access with it.
+      your remote access with it. This is the single most common way people
+      lock themselves out of a Tailscale home server.
 - [ ] Tighten ACLs to only what needs to reach it.
 - [ ] Consider Tailscale SSH (`tailscale up --ssh`).
 
