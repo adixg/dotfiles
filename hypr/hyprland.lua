@@ -207,7 +207,9 @@ hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 
 -- Launchers / lock / logout
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("wofi --show drun"))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wofi --show drun --conf ~/github/wofi/config/config --style ~/github/wofi/src/macchiato/style.css"))
+-- Alternate launcher theme. Absolute paths: exec_cmd does not run through a
+-- shell, so ~ is not expanded.
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("wofi --show drun --conf /home/aditya/.config/wofi/config --style /home/aditya/.config/wofi/style/style-dark.css"))
 
 hl.bind(
     "SUPER + I",
