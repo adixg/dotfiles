@@ -6,22 +6,23 @@
 # the wrong one.
 #
 # Layout:   btop across the top
-#           gping bottom-left, vnstat live rate bottom-right
+#           gping bottom-left, cmatrix bottom-right
 #
-# vnstat -l rather than one of the graph views: `vnstat -hg` draws a nice
-# hourly bar chart but needs ~80 columns, which a quarter-width pane does not
-# have. Run that one full width in its own window when you want history.
+# Swap the bottom-right pane by changing FILLER below. Anything that redraws
+# to fit its pane works: cmatrix, cava, asciiquarium (wants ~80 cols),
+# "vnstat -l", "journalctl -f", "watch -n5 sensors".
 #
 # Detach with prefix-d; the session keeps running with no display attached,
 # so it survives logout and can be re-attached over Tailscale.
 
 SESSION=wall
 PING_TARGET=${PING_TARGET:-1.1.1.1}
+FILLER=${FILLER:-cmatrix -ba -u 6}
 
 if ! tmux has-session -t "$SESSION" 2>/dev/null; then
     tmux new-session  -d -s "$SESSION" -n dash btop
     tmux split-window -v -l 40% -t "$SESSION:dash" gping "$PING_TARGET"
-    tmux split-window -h -l 50% -t "$SESSION:dash" vnstat -l
+    tmux split-window -h -l 50% -t "$SESSION:dash" $FILLER
     tmux select-pane  -t "$SESSION:dash".0
 fi
 
