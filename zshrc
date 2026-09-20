@@ -170,3 +170,6 @@ autoload -Uz compinit
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
 export PATH="$HOME/.local/bin:$PATH"
+export KUBECONFIG=$HOME/.kube/config
+
+export PATH=$PATH:/home/aditya/.spicetify
