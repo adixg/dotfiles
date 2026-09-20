@@ -14,11 +14,9 @@
     ],
 
     "modules-right": [
-        "cpu",
-        "memory",
-        "network",
         "pulseaudio",
-        "battery"
+        "custom/claude-usage",
+        "custom/codex-usage"
     ],
 
     "hyprland/workspaces": {
@@ -59,5 +57,25 @@
         "format-plugged": "BAT AC",
         "format-full": "BAT 100%",
         "interval": 10
+    },
+
+    "custom/claude-usage": {
+        "exec": "/home/aditya/.config/waybar/ai-usage.py claude",
+        "return-type": "json",
+        "interval": 120,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "pkill -RTMIN+8 waybar",
+        "signal": 8
+    },
+
+    "custom/codex-usage": {
+        "exec": "/home/aditya/.config/waybar/ai-usage.py codex",
+        "return-type": "json",
+        "interval": 120,
+        "format": "{}",
+        "tooltip": true,
+        "on-click": "pkill -RTMIN+9 waybar",
+        "signal": 9
     }
 }

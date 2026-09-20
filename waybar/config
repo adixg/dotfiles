@@ -4,41 +4,9 @@
 	"layer": "top",
 	"position": "top",
 
-	"modules-left": [
-		"hyprland/workspaces",
-		"custom/right-arrow-dark"
-	],
-	"modules-center": [
-		"custom/left-arrow-dark",
-		"clock#1",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"clock#2",
-		"custom/right-arrow-dark",
-		"custom/right-arrow-light",
-		"clock#3",
-		"custom/right-arrow-dark"
-	],
-	"modules-right": [
-		"custom/left-arrow-dark",
-		"pulseaudio",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"memory",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"cpu",
-		"network",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"battery",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"custom/left-arrow-light",
-		"custom/left-arrow-dark",
-		"backlight",
-		"tray"
-	],
+	"modules-left": ["hyprland/workspaces"],
+	"modules-center": ["clock#2"],
+	"modules-right": ["cpu", "memory", "network", "pulseaudio", "battery", "custom/claude-usage", "custom/codex-usage"],
 
   "hyprland/workspaces": {
         "format": "{icon}",
@@ -150,6 +118,25 @@
 	    	"device": "intel_backlight",
 	        "format": "{percent}% {icon}",
 		"format-icons": ["", ""]
-		}
-}
+	},
 
+	"custom/claude-usage": {
+		"exec": "/usr/bin/claude-usage --waybar --format '{icon_plain} 5h {5h_pct}% · {icon_plain} W {7d_pct}% · {time_icon_plain} {5h_reset}' --tooltip-format 'Claude usage\\n5-hour: {5h_pct}% · resets in {5h_reset}\\nWeekly: {7d_pct}% · resets in {7d_reset}'",
+		"return-type": "json",
+		"interval": 120,
+		"format": "{}",
+		"tooltip": true,
+		"on-click": "pkill -RTMIN+8 waybar",
+		"signal": 8
+	},
+
+	"custom/codex-usage": {
+		"exec": "/usr/bin/codex-usage --waybar --format '{icon_plain} 5h {5h_pct}% · {icon_plain} W {7d_pct}% · {time_icon_plain} {5h_reset}' --tooltip-format 'Codex usage\\n5-hour: {5h_pct}% · resets in {5h_reset}\\nWeekly: {7d_pct}% · resets in {7d_reset}'",
+		"return-type": "json",
+		"interval": 120,
+		"format": "{}",
+		"tooltip": true,
+		"on-click": "pkill -RTMIN+9 waybar",
+		"signal": 9
+	}
+}

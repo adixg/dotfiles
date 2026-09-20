@@ -2,15 +2,19 @@
 
 
 * {
-	font-size: 12px;
-	font-family: firacode;
-	font-weight: bold;
+	font-family: "FiraCode Nerd Font", monospace;
+	font-size: 14px;
+	font-weight: normal;
+	border-radius: 0;
+	min-height: 0;
 }
 
 window#waybar {
 	/*background: #292b2e;*/ 
-  background: #131020;
-  color: @blue;
+	background: alpha(@base, 0.92);
+	color: @text;
+	border-top: 1px solid @overlay0;
+	border-bottom: 1px solid @overlay0;
 }
 
 #custom-right-arrow-dark,
@@ -20,7 +24,7 @@ window#waybar {
 #custom-right-arrow-light,
 #custom-left-arrow-light {
 	color: #292b2e;
-	background: #1a1a1a;
+	background: transparent;
 }
 
 #workspaces,
@@ -32,14 +36,16 @@ window#waybar {
 #cpu,
 #battery,
 #disk,
+#custom-claude-usage,
+#custom-codex-usage,
 #tray {
 	background: #1a1a1a;
 }
 
 #workspaces button {
-	padding: 0 2px;
+	padding: 0 8px;
 	/*color: #fdf6e3;*/
-  color: @mauve;
+	color: @blue;
 }
 #workspaces button.focused {
 	color: #268bd2;
@@ -48,11 +54,7 @@ window#waybar {
 	box-shadow: inherit;
 	text-shadow: inherit;
 }
-#workspaces button:hover {
-	background: #1a1a1a;
-	border: #1a1a1a;
-	padding: 0 3px;
-}
+#workspaces button:hover { background: inherit; }
 
 #pulseaudio {
   color: @sky;
@@ -61,13 +63,50 @@ window#waybar {
   color: @flamingo;
 }
 #cpu {
-  color: @lavendar;
+  color: @lavender;
 }
 #battery {
   color: @blue;
 }
 #disk {
   color: @pink;
+}
+
+#custom-claude-usage,
+#custom-codex-usage {
+	padding: 0 8px;
+	border-left: 1px solid @surface1;
+	background: transparent;
+}
+
+#custom-claude-usage {
+	color: @peach;
+}
+
+#custom-codex-usage {
+	color: @teal;
+}
+
+#custom-claude-usage:hover,
+#custom-codex-usage:hover {
+	background: @surface0;
+}
+
+#custom-claude-usage.claude-low,
+#custom-codex-usage.codex-low {
+	color: @green;
+}
+
+#custom-claude-usage.claude-mid,
+#custom-codex-usage.codex-mid {
+	color: @yellow;
+}
+
+#custom-claude-usage.claude-high,
+#custom-codex-usage.codex-high,
+#custom-claude-usage.critical,
+#custom-codex-usage.critical {
+	color: @red;
 }
 
 #clock,
@@ -78,4 +117,3 @@ window#waybar {
 #disk {
 	padding: 0 10px;
 }
-
