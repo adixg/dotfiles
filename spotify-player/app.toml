@@ -1,5 +1,5 @@
 theme = "catppuccin_macchiato"
-client_id = "d420a117a32841c2b3474932e49fb54b"
+client_id_command = { command = "cat", args = ["/home/aditya/.config/spotify-player/client_id.secret"] }
 ncspot_only_get_endpoints = [
     "me/playlists",
     "playlists/",
@@ -21,8 +21,8 @@ notify_transient = false
 tracks_playback_limit = 50
 top_tracks_limit = 100
 app_refresh_duration_in_ms = 32
-playback_refresh_duration_in_ms = 0
-api_rate_limit_retries = 2
+playback_refresh_duration_in_ms = 5000
+api_rate_limit_retries = 5
 page_size_in_rows = 20
 play_icon = "▶"
 pause_icon = "▌▌"
