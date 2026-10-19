@@ -202,3 +202,30 @@
   '(org-table :foreground "#ffcc66" :weight bold :height 1.1))
 
 (setq projectile-project-search-path '("~/codes"))
+
+;;; NvChad-style keys
+
+(defun my/neotree-toggle ()
+  "Toggle neotree, opening it at the project root."
+  (interactive)
+  (if (neo-global--window-exists-p)
+      (neotree-hide)
+    (+neotree/open)))
+
+(map! :n "C-n" #'my/neotree-toggle
+      :n "C-h" #'evil-window-left
+      :n "C-j" #'evil-window-down
+      :n "C-k" #'evil-window-up
+      :n "C-l" #'evil-window-right
+      (:after neotree
+       :map neotree-mode-map
+       :n "C-n" #'my/neotree-toggle
+       :n "C-h" #'evil-window-left
+       :n "C-j" #'evil-window-down
+       :n "C-k" #'evil-window-up
+       :n "C-l" #'evil-window-right)
+      ;; org uses C-j/C-k for headings; those stay on ]h / [h
+      (:after evil-org
+       :map evil-org-mode-map
+       :n "C-j" #'evil-window-down
+       :n "C-k" #'evil-window-up))
