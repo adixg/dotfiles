@@ -201,7 +201,8 @@
 (custom-set-faces!
   '(org-table :foreground "#ffcc66" :weight bold :height 1.1))
 
-(setq projectile-project-search-path '("~/codes"))
+;; (DIR . 0) registers DIR itself as a project rather than its subfolders
+(setq projectile-project-search-path '("~/codes" ("~/research" . 0)))
 
 ;;; NvChad-style keys
 
