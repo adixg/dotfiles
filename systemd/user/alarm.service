@@ -1,0 +1,7 @@
+[Unit]
+Description=Wake-up alarm
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/alarm
+SuccessExitStatus=4

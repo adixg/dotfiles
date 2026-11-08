@@ -1,0 +1,11 @@
+[Unit]
+Description=Wake-up alarm timer
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=false
+AccuracySec=1s
+WakeSystem=false
+
+[Install]
+WantedBy=timers.target
