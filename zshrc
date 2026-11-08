@@ -111,6 +111,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 alias vi='nvim'
+alias notes='tmux attach -t research'
 alias weather='curl -s wttr.in | head -n 38 '
 alias h='history | grep '
 alias sound='function _sound() { pactl set-sink-volume @DEFAULT_SINK@ "$1%"; }; _sound'
@@ -173,3 +174,17 @@ export PATH="$HOME/.local/bin:$PATH"
 export KUBECONFIG=$HOME/.kube/config
 
 export PATH=$PATH:/home/aditya/.spicetify
+
+# Start the k3s cluster, wait for the API server, then list pods
+rina-start() {
+  sudo systemctl start k3s || return
+  echo "Waiting for API server..."
+  until kubectl get nodes >/dev/null 2>&1; do sleep 3; done
+  kubectl get pods -A
+}
+
+# Stop k3s and all its containers to free RAM (state is kept; use rina-start to resume)
+rina-stop() {
+  sudo /usr/local/bin/k3s-killall.sh >/dev/null 2>&1
+  free -h
+}
