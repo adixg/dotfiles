@@ -1,0 +1,49 @@
+# Keeps the dashboard reachable on the tailnet without anyone starting it.
+#
+# This is a deliberate amendment to DECISIONS section 2, which says "on demand
+# only, no systemd timer, no cron, no linger". That rule is about *collection* --
+# nothing here fetches a job posting or touches the network outbound. It serves
+# what SQLite already holds, re-rendered per request, so the pipeline stays on
+# demand while the viewer stays up.
+#
+#   Install:
+#     mkdir -p ~/.config/systemd/user
+#     cp deploy/jobs-dashboard.service ~/.config/systemd/user/
+#     systemctl --user daemon-reload
+#     systemctl --user enable --now jobs-dashboard
+#
+#   Survive logout and reboot (needs sudo once):
+#     sudo loginctl enable-linger $USER
+#
+#   Check it:
+#     systemctl --user status jobs-dashboard
+#     journalctl --user -u jobs-dashboard -f
+
+[Unit]
+Description=Job pipeline dashboard (read-only, tailnet)
+Documentation=https://github.com/adixg/jobs
+After=network-online.target tailscaled.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/jobs
+ExecStart=%h/jobs/.venv/bin/jobs serve --port 8765
+
+# Tailscale may not have an address yet at boot; keep trying rather than give up.
+Restart=always
+RestartSec=10s
+
+# It only ever reads the database and rewrites reports/dashboard.html.
+ProtectSystem=strict
+ReadWritePaths=%h/jobs/reports %h/jobs/data
+ProtectHome=read-only
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+MemoryMax=512M
+
+[Install]
+WantedBy=default.target
