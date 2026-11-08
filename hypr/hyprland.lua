@@ -199,6 +199,7 @@ hl.bind(mainMod .. " + U",      hl.dsp.exec_cmd("alacritty"))
 hl.bind(mainMod .. " + Z",      hl.dsp.exec_cmd("librewolf"))
 hl.bind(mainMod .. " + D",      hl.dsp.exec_cmd("discord"))
 hl.bind(mainMod .. " + Y",      hl.dsp.exec_cmd("anki"))
+hl.bind(mainMod .. " + X",      hl.dsp.exec_cmd("~/.config/hypr/scripts/jbl-toggle.sh"))
 
 -- Window / compositor actions
 hl.bind(mainMod .. " + C", hl.dsp.window.close({}))
