@@ -296,8 +296,7 @@ gradient_color_8 = '#ed8796'
 
 [input]
 method = pulse
-source = alsa_output.pci-0000_00_1f.3.analog-stereo.monitor
+source = auto
 
 [output]
 method = ncurses
-
