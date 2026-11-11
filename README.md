@@ -30,9 +30,3 @@ Most things follow the **Catppuccin Macchiato** palette.
 
 Each top-level folder mirrors `~/.config/<folder>`; `zshrc` maps to `~/.zshrc`
 and `wifi.zsh` to `~/wifi.zsh`. Copy or symlink whichever pieces you want.
-
-## Notes
-
-- Secrets are **not** stored here. `weechat/irc.conf` keeps `libera.sasl_password`
-  empty, and the `iit` / `iitjump` aliases in `zshrc` read passwords from the
-  `IIT_SSH_PASS` / `IITJUMP_SSH_PASS` environment variables.
