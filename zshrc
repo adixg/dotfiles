@@ -1,3 +1,6 @@
+# Tailscale SSH logins can arrive with TERM=dumb, which turns off all colour.
+[[ -n $SSH_TTY && $TERM == dumb ]] && export TERM=xterm-256color
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
