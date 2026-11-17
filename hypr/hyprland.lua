@@ -60,7 +60,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("kitty btop", { workspace = "9 silent" })
 
     -- Big clock on its own workspace, pinned to the laptop panel below.
-    hl.exec_cmd("kitty -o font_size=72 -e tty-clock -c -C 6 -s -b -B",
+    hl.exec_cmd("kitty -o font_size=36 -e tty-clock -c -C 6 -s -b -B",
                 { workspace = "8 silent" })
 
     hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE")
