@@ -15,7 +15,7 @@
 
     "modules-right": [
         "pulseaudio",
-        "custom/claude-usage",
+        "bluetooth",
         "custom/codex-usage"
     ],
 
@@ -59,14 +59,14 @@
         "interval": 10
     },
 
-    "custom/claude-usage": {
-        "exec": "/home/aditya/.config/waybar/ai-usage.py claude",
-        "return-type": "json",
-        "interval": 120,
-        "format": "{}",
-        "tooltip": true,
-        "on-click": "pkill -RTMIN+8 waybar",
-        "signal": 8
+    "bluetooth": {
+        "format-off": "BT OFF",
+        "format-on": "BT ON",
+        "format-connected": "BT {device_alias}",
+        "format-no-controller": "BT N/A",
+        "tooltip-format": "{controller_alias}: {status}",
+        "tooltip-format-connected": "{device_alias}: Connected",
+        "on-click": "~/.config/hypr/scripts/jbl-toggle.sh"
     },
 
     "custom/codex-usage": {

@@ -38,7 +38,7 @@ window#waybar {
 
 #cpu,
 #battery,
-#custom-claude-usage,
+#bluetooth,
 #custom-codex-usage {
     padding: 0 8px;
     border-left: 1px solid #494d64;
@@ -72,34 +72,41 @@ window#waybar {
     color: #6e738d;
 }
 
-#custom-claude-usage {
-    color: @peach;
-    font-weight: normal;
-}
-
 #custom-codex-usage {
     color: @teal;
     font-weight: normal;
 }
 
-#custom-claude-usage:hover,
 #custom-codex-usage:hover {
     background: @surface0;
 }
 
-#custom-claude-usage.claude-low,
 #custom-codex-usage.codex-low {
     color: @green;
 }
 
-#custom-claude-usage.claude-mid,
 #custom-codex-usage.codex-mid {
     color: @yellow;
 }
 
-#custom-claude-usage.claude-high,
 #custom-codex-usage.codex-high,
-#custom-claude-usage.critical,
 #custom-codex-usage.critical {
     color: @red;
+}
+
+#bluetooth {
+    color: @blue;
+}
+
+#bluetooth:hover {
+    background: @surface0;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+    color: @overlay0;
+}
+
+#bluetooth.connected {
+    color: @sky;
 }
